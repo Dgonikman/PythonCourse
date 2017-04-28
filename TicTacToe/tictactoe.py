@@ -7,16 +7,22 @@ playerIndex = 0
 def DeclareWinner(winnerIdx):
     print 'Game Over, {winner} is the winner!'.format(winner=players[winnerIdx])
 
-def HasWinner(): # Evaluate board for a winner
-    global turns
-    turns += 1
-
-    for row in board:
+def CheckRows(matrix):
+    for row in matrix:
         rowSet = set(row)
         if len(rowSet) == 1:
             mark = rowSet.pop()
             DeclareWinner(marks.index(mark))
             return True
+
+def HasWinner(): # Evaluate board for a winner
+    global turns
+    turns += 1
+
+    if CheckRows(board):
+        return True
+    if CheckRows(zip(*board)):
+        return True
     return False
 
 def EndGame():

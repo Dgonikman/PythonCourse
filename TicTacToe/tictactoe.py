@@ -4,12 +4,19 @@ marks = ('X', 'O')
 turns = 0
 playerIndex = 0
 
+def DeclareWinner(winnerIdx):
+    print 'Game Over, {winner} is the winner!'.format(winner=players[winnerIdx])
+
 def HasWinner(): # Evaluate board for a winner
     global turns
     turns += 1
-    if turns > 10:
-        print 'Game Over, {winner} is the winner!'.format(winner=players[playerIndex])
-        return True
+
+    for row in board:
+        rowSet = set(row)
+        if len(rowSet) == 1:
+            mark = rowSet.pop()
+            DeclareWinner(marks.index(mark))
+            return True
     return False
 
 def EndGame():

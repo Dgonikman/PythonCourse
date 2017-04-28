@@ -4,8 +4,19 @@ marks = ('X', 'O')
 turns = 0
 playerIndex = 0
 
-def DeclareWinner(winnerIdx):
-    print 'Game Over, {winner} is the winner!'.format(winner=players[winnerIdx])
+def HasWinner(): # Evaluate board for a winner
+    global turns
+    turns += 1
+
+    if CheckRows(board):
+        return True
+    if CheckRows(zip(*board)):
+        return True
+    if board[0][0] == board[1][1] == board[2][2] or board[0][2] == board[1][1] == board[2][0]:
+        mark = board[1][1]
+        DeclareWinner(marks.index(mark))
+        return True
+    return False
 
 def CheckRows(matrix):
     for row in matrix:
@@ -15,15 +26,8 @@ def CheckRows(matrix):
             DeclareWinner(marks.index(mark))
             return True
 
-def HasWinner(): # Evaluate board for a winner
-    global turns
-    turns += 1
-
-    if CheckRows(board):
-        return True
-    if CheckRows(zip(*board)):
-        return True
-    return False
+def DeclareWinner(winnerIdx):
+    print 'Game Over, {winner} is the winner!'.format(winner=players[winnerIdx])
 
 def EndGame():
     global turns

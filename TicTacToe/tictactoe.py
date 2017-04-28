@@ -1,5 +1,6 @@
 # Global Init
 board = [[1,2,3],[4,5,6],[7,8,9]]
+marks = ('X', 'O')
 turns = 0
 playerIndex = 0
 
@@ -18,6 +19,16 @@ def EndGame():
         return True
     return False
 
+def PrintBoard():
+    global board
+    print "{x}\n{y}\n{z}".format(x=board[0], y=board[1], z=board[2])
+
+def MarkBoard(cell):
+    for row in board:
+        if cell in row:
+            idx = row.index(cell)
+            row[idx] = marks[playerIndex]
+
 # Start Game
 print 'Welcome to Tic-Tac-Toe!'
 
@@ -27,10 +38,13 @@ player2 = raw_input("Player2, what's your name? ") or "Player2"
 players = (player1, player2)
 
 # Play
+PrintBoard()
 while not HasWinner() and not EndGame():
-    print "{x}\n{y}\n{z}".format(x=board[0], y=board[1], z=board[2])
-    print "{p}, it's your turn.".format(p=players[playerIndex])
     # Get input from current player
+    print "{p}, it's your turn.".format(p=players[playerIndex])
+    cell = int(raw_input("Choose cell: "))
+    MarkBoard(cell)
+    PrintBoard()
     # Check board
     playerIndex += 1
     playerIndex %= 2

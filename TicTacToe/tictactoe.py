@@ -12,7 +12,11 @@ def HasWinner(): # Evaluate board for a winner
         return True
     return False
 
-players = ("Player1", "Player2") # Get players' names
+# Get players' names 
+player1 = raw_input("Player1, what's your name? ") or "Player1"
+player2 = raw_input("Player2, what's your name? ") or "Player2"
+players = (player1, player2)
+
 # Play
 print "{x}\n{y}\n{z}".format(x=board[0], y=board[1], z=board[2])
 while not HasWinner():

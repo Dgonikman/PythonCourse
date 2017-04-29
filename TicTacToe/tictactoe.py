@@ -1,5 +1,5 @@
 # Global Init
-board = [[1,2,3],[4,5,6],[7,8,9]]
+board = [['1','2','3'],['4','5','6'],['7','8','9']]
 marks = ('X', 'O')
 turns = 0
 playerIndex = 0
@@ -59,7 +59,7 @@ print_board()
 while not has_winner() and not end_game():
     # Get input from current player
     print "{p}, it's your turn.".format(p=players[playerIndex])
-    cell = int(raw_input("Choose cell: "))
+    cell = raw_input("Choose cell: ")
     mark_board(cell)
     print_board()
     # Check board

@@ -3,8 +3,32 @@ from enum import Enum
 
 class State(Enum):
     Active = 0
-    Bust = 1
-    Stand = 2
+    BlackJack = 1
+    Bust = 2
+    Stand = 3
+
+
+def value_of(rank):
+    """
+    :param rank: Card rank 
+    :return: integer value of the rank
+    """
+    return \
+    {
+        'A': 11,
+        'K': 10,
+        'Q': 10,
+        'J': 10,
+        '10': 10,
+        '9': 9,
+        '8': 8,
+        '7': 7,
+        '6': 6,
+        '5': 5,
+        '4': 4,
+        '3': 3,
+        '2': 2,
+    }.get(rank, 0)
 
 
 class Hand(object):
@@ -23,10 +47,18 @@ class Hand(object):
                ''.join(map(str, self.Cards)) + ' Value: ' + str(self.value)
 
     def __len__(self):
-        # TODO: should be value of the cards
-        return len(self.Cards)
+        value = 0
+        for card in self.Cards:
+            if not card.IsFaceDown:
+                value += value_of(card.Rank)
+            if value > 21 and card.Rank == 'A':
+                # 'A' can be 1 or 11
+                value -= 10
+        return value
 
     def deal(self, card):
         self.Cards.append(card)
+        if self.value == 21 and len(self.Cards) == 2:
+            self.Status = State.BlackJack
         if self.value > 21:
             self.Status = State.Bust

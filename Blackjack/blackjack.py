@@ -1,5 +1,6 @@
 from deck import Shoe
 from player import Player
+from hand import Hand
 
 # Constants
 INITIAL_BALANCE = 100
@@ -9,26 +10,6 @@ MINIMAL_BET = 1
 dealer_hand = Hand(Player("Dealer", None), None)
 active_players = [Player("Player1", INITIAL_BALANCE)]
 shoe = Shoe(6)
-
-
-class Hand(object):
-    def __init__(self, current_player, bet):
-        self.Player = current_player
-        self.Bet = bet
-        self.Cards = []
-
-    @property
-    def value(self):
-        return len(self)
-
-    def __str__(self):
-        return str(self.Player.Name) + ',' + str(self.Bet) + ':' +\
-               ''.join(map(str, self.Cards)) + ' Value: ' + str(self.value)
-
-    def __len__(self):
-        # should be value of the cards
-        return len(self.Cards)
-
 
 while len(active_players) > 0:
     # Init round

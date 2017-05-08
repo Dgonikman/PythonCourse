@@ -17,9 +17,13 @@ def play_hand(hand_to_play, action):
             hand_to_play.Status = State.Stand
         elif hand_to_play.value > 21:
             print str(hand_to_play.value) + ". Your hand is dead, " + player_name
-            hand_to_play.Status = State.Bust
     elif action == 'D' or action == 'd':
-        print "Not supported yet."
+        print player_name + " chose to double"
+        hand_to_play.Bet *= 2
+        hand_to_play.deal(shoe.pop())
+        if hand_to_play.value < 21:
+            hand_to_play.Status = State.Stand
+        print hand_to_play
     else:
         print "Illegal move, try again."
 

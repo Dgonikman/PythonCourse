@@ -8,35 +8,13 @@ class State(Enum):
     Stand = "Stand"
 
 
-def value_of(rank):
-    """
-    :param rank: Card rank 
-    :return: integer value of the rank
-    """
-    return \
-    {
-        'A': 11,
-        'K': 10,
-        'Q': 10,
-        'J': 10,
-        '10': 10,
-        '9': 9,
-        '8': 8,
-        '7': 7,
-        '6': 6,
-        '5': 5,
-        '4': 4,
-        '3': 3,
-        '2': 2,
-    }.get(rank, 0)
-
-
 class Hand(object):
     def __init__(self, current_player, bet):
         self.Player = current_player
         self.Bet = bet
         self.Status = State.Active
         self.Cards = []
+        self.CanSplit = False
 
     @property
     def value(self):
@@ -51,7 +29,7 @@ class Hand(object):
         value = 0
         for card in self.Cards:
             if not card.IsFaceDown:
-                value += value_of(card.Rank)
+                value += card.value
             if value > 21 and card.Rank == 'A':
                 # 'A' can be 1 or 11
                 value -= 10
@@ -63,7 +41,11 @@ class Hand(object):
             self.Status = State.BlackJack
         if self.value > 21:
             self.Status = State.Bust
+        if len(self.Cards) == 2 and \
+           self.Cards[0].value == self.Cards[1].value:
+            self.CanSplit = True
 
     def reset(self):
         self.Status = State.Active
         self.Cards = []
+        self.CanSplit = False

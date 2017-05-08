@@ -31,6 +31,32 @@ def play_hand(hand_to_play, action):
         print "Illegal move, try again."
 
 
+def pay_players():
+    blackjack_hands = [played_hand for played_hand in finished_hands if played_hand.Status == State.BlackJack]
+    bust_hands = [played_hand for played_hand in finished_hands if played_hand.Status == State.Bust]
+    stand_hands = [played_hand for played_hand in finished_hands if played_hand.Status == State.Stand]
+
+    for bust_hand in bust_hands:
+        bust_hand.Player.Balance -= bust_hand.Bet
+        print bust_hand
+
+    for blackjack_hand in blackjack_hands:
+        blackjack_hand.Player.Balance += 1.5 * blackjack_hand.Bet
+        print blackjack_hand
+
+    for stand_hand in stand_hands:
+        if dealer_hand.Status == State.Bust:
+            stand_hand.Player.Balance += stand_hand.Bet
+        else:  # Dealer Stand or Blackjack
+            if stand_hand.value == dealer_hand.value:
+                stand_hand.Player.Balance += 0 # Push
+            elif stand_hand.value > dealer_hand.value:
+                stand_hand.Player.Balance += stand_hand.Bet
+            else:
+                stand_hand.Player.Balance -= stand_hand.Bet
+        print stand_hand
+
+
 def any_stand_hands():
     stand_hands = [hand for hand in finished_hands if hand.Status == State.Stand]
     return len(stand_hands) > 0
@@ -89,6 +115,8 @@ while len(active_players) > 0:
         print dealer_hand
 
     # Pay
+    pay_players()
+
     # Bankrupt everybody
     for player in active_players:
         # player.Balance -= player.Balance

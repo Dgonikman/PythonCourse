@@ -2,10 +2,10 @@ from enum import Enum
 
 
 class State(Enum):
-    Active = 0
-    BlackJack = 1
-    Bust = 2
-    Stand = 3
+    Active = "Active"
+    BlackJack = "BlackJack"
+    Bust = "Bust"
+    Stand = "Stand"
 
 
 def value_of(rank):
@@ -43,8 +43,9 @@ class Hand(object):
         return len(self)
 
     def __str__(self):
-        return str(self.Player.Name) + ',' + str(self.Bet) + ':' + \
-               ''.join(map(str, self.Cards)) + ' Value: ' + str(self.value)
+        return str(self.Player.Name) + ',' + str(self.Bet) + ':\t' + \
+               ''.join(map(str, self.Cards)) + '\tValue: ' + str(self.value) + \
+               ", " + self.Status
 
     def __len__(self):
         value = 0
@@ -62,3 +63,7 @@ class Hand(object):
             self.Status = State.BlackJack
         if self.value > 21:
             self.Status = State.Bust
+
+    def reset(self):
+        self.Status = State.Active
+        self.Cards = []

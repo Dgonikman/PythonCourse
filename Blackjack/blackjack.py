@@ -2,14 +2,7 @@ from deck import Shoe
 from player import Player
 from hand import Hand, State
 
-# Constants
-INITIAL_BALANCE = 100
-MINIMAL_BET = 1
 
-# Globals
-dealer_hand = Hand(Player("Dealer", None), None)
-active_players = [Player("Player1", INITIAL_BALANCE)]
-shoe = Shoe(6)
 def play_hand(hand_to_play, action):
     player_name = hand_to_play.Player.Name
     if action == 'S' or action == 's':
@@ -62,6 +55,7 @@ def any_stand_hands():
     return len(stand_hands) > 0
 
 
+# Pretty printing
 def print_hand():
     print
     print dealer_hand
@@ -69,13 +63,41 @@ def print_hand():
     print playing_hand.Player.Name + ", what do you do?"
 
 
+def break_line():
+    breaker = ''
+    for _ in xrange(0, 60):
+        breaker += '-'
+    print breaker
+
+
+def tab_offset():
+    offset = ''
+    for _ in xrange(0, 8):
+        offset += '\t'
+    return offset
+
+
+# Constants
+INITIAL_BALANCE = 100
+MINIMAL_BET = 10
+
+# Globals
+dealer_hand = Hand(Player("Dealer", None), None)
+active_players = [Player("Player1", INITIAL_BALANCE)]
+shoe = Shoe(6)
+rounds = 0
+
+# Game
 while len(active_players) > 0:
     # Init round
+    rounds += 1
     active_hands = []
     finished_hands = []
+    dealer_hand.reset()
+    break_line()
     for player in active_players:
         active_hands.append(Hand(player, MINIMAL_BET))
-    print 'Active Hands: {hands}'.format(hands=len(active_hands))
+    print 'Round #{r}'.format(r=rounds)
 
     # Deal hands
     for _ in xrange(0, 2):
@@ -89,6 +111,7 @@ while len(active_players) > 0:
     print dealer_hand
     for hand in active_hands:
         print hand
+    break_line()
 
     # Gameplay
     while len(active_hands) > 0:
@@ -99,6 +122,7 @@ while len(active_players) > 0:
             play_hand(playing_hand, raw_input("(S)tand\(H)it\(D)ouble: "))
 
         finished_hands.append(playing_hand)
+        break_line()
 
     # Show dealers' hand
     dealer_hand.Cards[0].flip()
@@ -119,6 +143,7 @@ while len(active_players) > 0:
 
     # Bankrupt everybody
     for player in active_players:
+        print tab_offset() + str(player)
         # player.Balance -= player.Balance
 
     # Check remaining cash

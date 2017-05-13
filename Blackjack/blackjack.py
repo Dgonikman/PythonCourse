@@ -24,8 +24,20 @@ def play_hand(hand_to_play, action):
         if hand_to_play.value < 21:
             hand_to_play.Status = State.Stand
         print hand_to_play
+    elif action == 'P' or action == 'p':
+        first_hand = split_hand(hand_to_play, 0)
+        second_hand = split_hand(hand_to_play, 1)
+        return first_hand, second_hand
     else:
         print "Illegal move, try again."
+    return hand_to_play, None
+
+
+def split_hand(hand_to_play, idx):
+    new_hand = Hand(hand_to_play.Player, hand_to_play.Bet)
+    new_hand.deal(hand_to_play.Cards[idx])
+    new_hand.deal(shoe.pop())
+    return new_hand
 
 
 def pay_players():
@@ -46,7 +58,7 @@ def pay_players():
             stand_hand.Player.Balance += stand_hand.Bet
         else:  # Dealer Stand or Blackjack
             if stand_hand.value == dealer_hand.value:
-                stand_hand.Player.Balance += 0 # Push
+                stand_hand.Player.Balance += 0  # Push
             elif stand_hand.value > dealer_hand.value:
                 stand_hand.Player.Balance += stand_hand.Bet
             else:
@@ -60,11 +72,11 @@ def any_stand_hands():
 
 
 # Pretty printing
-def print_hand():
+def print_hand(hand_to_print):
     print
     print dealer_hand
-    print hand
-    print playing_hand.Player.Name + ", what do you do?"
+    print hand_to_print
+    print hand_to_print.Player.Name + ", what do you do?"
 
 
 def break_line():
@@ -120,11 +132,15 @@ while len(active_players) > 0:
     # Gameplay
     while len(active_hands) > 0:
         playing_hand = active_hands.pop(0)
-
         while playing_hand.Status == State.Active:
-            print_hand()
-            play_hand(playing_hand, raw_input("(S)tand\(H)it\(D)ouble: "))
-
+            print_hand(playing_hand)
+            possible_actions = "(S)tand\(H)it\(D)ouble"
+            if playing_hand.CanSplit:
+                possible_actions += "\s(P)lit"
+            hand1, hand2 = play_hand(playing_hand, raw_input(possible_actions + ": "))
+            playing_hand = hand1
+            if hand2 is not None:
+                active_hands.insert(0, hand2)
         finished_hands.append(playing_hand)
         break_line()
 

@@ -36,6 +36,9 @@ class Hand(object):
         return value
 
     def deal(self, card):
+        """
+        :type card: Card
+        """
         self.Cards.append(card)
         if self.value == 21 and len(self.Cards) == 2:
             self.Status = State.BlackJack

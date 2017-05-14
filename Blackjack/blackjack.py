@@ -4,6 +4,10 @@ from hand import Hand, State
 
 
 def play_hand(hand_to_play, action):
+    """
+    :param action: players' move
+    :type hand_to_play: Hand
+    """
     player_name = hand_to_play.Player.Name
     if action == 'S' or action == 's':
         print player_name + " chose to stand"
@@ -27,6 +31,10 @@ def play_hand(hand_to_play, action):
 
 
 def split_hand(hand_to_play, idx):
+    """
+    :param idx: card index in hand
+    :type hand_to_play: Hand
+    """
     new_hand = Hand(hand_to_play.Player, hand_to_play.Bet)
     new_hand.deal(hand_to_play.Cards[idx])
     new_hand.deal(shoe.pop())
@@ -66,6 +74,9 @@ def any_stand_hands():
 
 # Pretty printing
 def print_hand(hand_to_print):
+    """
+    :type hand_to_print: Hand
+    """
     print
     print dealer_hand
     print hand_to_print
@@ -73,6 +84,9 @@ def print_hand(hand_to_print):
 
 
 def print_hand_status(hand_to_print):
+    """
+    :type hand_to_print: Hand
+    """
     player_name = hand_to_print.Player.Name
     print hand_to_print
     if hand_to_print.Status == State.BlackJack:

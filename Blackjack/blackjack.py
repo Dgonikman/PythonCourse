@@ -11,19 +11,12 @@ def play_hand(hand_to_play, action):
     elif action == 'H' or action == 'h':
         print player_name + " chose to hit"
         hand_to_play.deal(shoe.pop())
-        print hand_to_play
-        if hand_to_play.value == 21:
-            print "21! " + player_name + ", your'e done"
-            hand_to_play.Status = State.Stand
-        elif hand_to_play.value > 21:
-            print str(hand_to_play.value) + ". Your hand is dead, " + player_name
     elif action == 'D' or action == 'd':
         print player_name + " chose to double"
         hand_to_play.Bet *= 2
         hand_to_play.deal(shoe.pop())
         if hand_to_play.value < 21:
             hand_to_play.Status = State.Stand
-        print hand_to_play
     elif action == 'P' or action == 'p':
         first_hand = split_hand(hand_to_play, 0)
         second_hand = split_hand(hand_to_play, 1)
@@ -67,7 +60,7 @@ def pay_players():
 
 
 def any_stand_hands():
-    stand_hands = [hand for hand in finished_hands if hand.Status == State.Stand]
+    stand_hands = [h for h in finished_hands if h.Status == State.Stand]
     return len(stand_hands) > 0
 
 
@@ -77,6 +70,16 @@ def print_hand(hand_to_print):
     print dealer_hand
     print hand_to_print
     print hand_to_print.Player.Name + ", what do you do?"
+
+
+def print_hand_status(hand_to_print):
+    player_name = hand_to_print.Player.Name
+    print hand_to_print
+    if hand_to_print.Status == State.BlackJack:
+        print "21! " + player_name + ", your'e done"
+        hand_to_print.Status = State.Stand
+    elif hand_to_print.Status == State.Bust:
+        print str(hand_to_print.value) + ". Your hand is dead, " + player_name
 
 
 def break_line():
@@ -141,6 +144,7 @@ while len(active_players) > 0:
             playing_hand = hand1
             if hand2 is not None:
                 active_hands.insert(0, hand2)
+            print_hand_status(playing_hand)
         finished_hands.append(playing_hand)
         break_line()
 
@@ -153,6 +157,7 @@ while len(active_players) > 0:
         while dealer_hand.value < 16:
             raw_input("Hit any key to deal next card...")
             play_hand(dealer_hand, 'H')
+            print_hand_status(dealer_hand)
         if dealer_hand.Status == State.Active:
             dealer_hand.Status = State.Stand
         print
@@ -167,8 +172,8 @@ while len(active_players) > 0:
         # player.Balance -= player.Balance
 
     # Check remaining cash
-    bankrupt_players = [player for player in active_players if player.Balance <= 0]
-    active_players = [player for player in active_players if player.Balance > 0]
+    bankrupt_players = [p for p in active_players if p.Balance <= 0]
+    active_players = [p for p in active_players if p.Balance > 0]
 
     print
     for player in bankrupt_players:

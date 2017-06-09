@@ -42,9 +42,9 @@ def split_hand(hand_to_play, idx):
 
 
 def pay_players():
-    blackjack_hands = [played_hand for played_hand in finished_hands if played_hand.Status == State.BlackJack]
-    bust_hands = [played_hand for played_hand in finished_hands if played_hand.Status == State.Bust]
-    stand_hands = [played_hand for played_hand in finished_hands if played_hand.Status == State.Stand]
+    blackjack_hands = filter(lambda h: h.Status == State.BlackJack, finished_hands)
+    bust_hands = filter(lambda h: h.Status == State.Bust, finished_hands)
+    stand_hands = filter(lambda h: h.Status == State.Stand, finished_hands)
 
     for bust_hand in bust_hands:
         bust_hand.Player.Balance -= bust_hand.Bet
@@ -68,7 +68,7 @@ def pay_players():
 
 
 def any_stand_hands():
-    stand_hands = [h for h in finished_hands if h.Status == State.Stand]
+    stand_hands = filter(lambda h: h.Status == State.Stand, finished_hands)
     return len(stand_hands) > 0
 
 
@@ -186,8 +186,8 @@ while len(active_players) > 0:
         # player.Balance -= player.Balance
 
     # Check remaining cash
-    bankrupt_players = [p for p in active_players if p.Balance <= 0]
-    active_players = [p for p in active_players if p.Balance > 0]
+    bankrupt_players = filter(lambda p: p.Balance <= 0, active_players)
+    active_players = filter(lambda p: p.Balance > 0, active_players)
 
     print
     for player in bankrupt_players:

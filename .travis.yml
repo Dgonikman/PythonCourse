@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.6"
+cache: pip
+install:
+  - cd BlackJack
+  - pip install -r requirements.txt
+script:
+  - cd BlackJack
+  - python -m unittest tests/*
+

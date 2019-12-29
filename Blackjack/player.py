@@ -7,4 +7,4 @@ class Player(object):
         return self.Balance
 
     def __str__(self):
-        return "{n}: {b}$".format(n=self.Name, b=self.Balance)
+        return f"{self.Name}: {self.Balance}$"

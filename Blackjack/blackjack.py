@@ -10,13 +10,13 @@ def play_hand(hand_to_play, action):
     """
     player_name = hand_to_play.Player.Name
     if action == 'S' or action == 's':
-        print player_name + " chose to stand"
+        print(f"{player_name } chose to stand")
         hand_to_play.Status = State.Stand
     elif action == 'H' or action == 'h':
-        print player_name + " chose to hit"
+        print(f"{player_name } chose to hit")
         hand_to_play.deal(shoe.pop())
     elif action == 'D' or action == 'd':
-        print player_name + " chose to double"
+        print(f"{player_name } chose to double")
         hand_to_play.Bet *= 2
         hand_to_play.deal(shoe.pop())
         if hand_to_play.value < 21:
@@ -26,7 +26,7 @@ def play_hand(hand_to_play, action):
         second_hand = split_hand(hand_to_play, 1)
         return first_hand, second_hand
     else:
-        print "Illegal move, try again."
+        print("Illegal move, try again.")
     return hand_to_play, None
 
 
@@ -48,11 +48,11 @@ def pay_players():
 
     for bust_hand in bust_hands:
         bust_hand.Player.Balance -= bust_hand.Bet
-        print bust_hand
+        print(bust_hand)
 
     for blackjack_hand in blackjack_hands:
         blackjack_hand.Player.Balance += 1.5 * blackjack_hand.Bet
-        print blackjack_hand
+        print(blackjack_hand)
 
     for stand_hand in stand_hands:
         if dealer_hand.Status == State.Bust:
@@ -64,11 +64,11 @@ def pay_players():
                 stand_hand.Player.Balance += stand_hand.Bet
             else:
                 stand_hand.Player.Balance -= stand_hand.Bet
-        print stand_hand
+        print(stand_hand)
 
 
 def any_stand_hands():
-    stand_hands = filter(lambda h: h.Status == State.Stand, finished_hands)
+    stand_hands = [h for h in finished_hands if h.Status == State.Stand]
     return len(stand_hands) > 0
 
 
@@ -77,10 +77,10 @@ def print_hand(hand_to_print):
     """
     :type hand_to_print: Hand
     """
-    print
-    print dealer_hand
-    print hand_to_print
-    print hand_to_print.Player.Name + ", what do you do?"
+    print()
+    print(dealer_hand)
+    print(hand_to_print)
+    print(f"{hand_to_print.Player.Name}, what do you do?")
 
 
 def print_hand_status(hand_to_print):
@@ -88,24 +88,24 @@ def print_hand_status(hand_to_print):
     :type hand_to_print: Hand
     """
     player_name = hand_to_print.Player.Name
-    print hand_to_print
+    print(hand_to_print)
     if hand_to_print.Status == State.BlackJack:
-        print "21! " + player_name + ", your'e done"
+        print(f"21! {player_name}, your'e done")
         hand_to_print.Status = State.Stand
     elif hand_to_print.Status == State.Bust:
-        print str(hand_to_print.value) + ". Your hand is dead, " + player_name
+        print(f"{str(hand_to_print.value)}. Your hand is dead, {player_name}")
 
 
 def break_line():
     breaker = ''
-    for _ in xrange(0, 60):
+    for _ in range(0, 60):
         breaker += '-'
-    print breaker
+    print(breaker)
 
 
 def tab_offset():
     offset = ''
-    for _ in xrange(0, 8):
+    for _ in range(0, 8):
         offset += '\t'
     return offset
 
@@ -130,20 +130,20 @@ while len(active_players) > 0:
     break_line()
     for player in active_players:
         active_hands.append(Hand(player, MINIMAL_BET))
-    print 'Round #{r}'.format(r=rounds)
+    print(f"Round #{rounds}")
 
     # Deal hands
-    for _ in xrange(0, 2):
+    for _ in range(0, 2):
         for hand in active_hands:
             hand.deal(shoe.pop())
         dealer_hand.deal(shoe.pop())
     dealer_hand.Cards[0].flip()
 
     # Print hands
-    print
-    print dealer_hand
+    print()
+    print(dealer_hand)
     for hand in active_hands:
-        print hand
+        print(hand)
     break_line()
 
     # Gameplay
@@ -154,7 +154,7 @@ while len(active_players) > 0:
             possible_actions = "(S)tand\(H)it\(D)ouble"
             if playing_hand.CanSplit:
                 possible_actions += "\s(P)lit"
-            hand1, hand2 = play_hand(playing_hand, raw_input(possible_actions + ": "))
+            hand1, hand2 = play_hand(playing_hand, input(possible_actions + ": "))
             playing_hand = hand1
             if hand2 is not None:
                 active_hands.insert(0, hand2)
@@ -164,34 +164,34 @@ while len(active_players) > 0:
 
     # Show dealers' hand
     dealer_hand.Cards[0].flip()
-    print
-    print dealer_hand
+    print()
+    print(dealer_hand)
 
     while dealer_hand.Status == State.Active and any_stand_hands():
         while dealer_hand.value < 16:
-            raw_input("Hit any key to deal next card...")
+            input("Hit any key to deal next card...")
             play_hand(dealer_hand, 'H')
             print_hand_status(dealer_hand)
         if dealer_hand.Status == State.Active:
             dealer_hand.Status = State.Stand
-        print
-        print dealer_hand
+        print()
+        print(dealer_hand)
 
     # Pay
     pay_players()
 
     # Bankrupt everybody
     for player in active_players:
-        print tab_offset() + str(player)
+        print(tab_offset() + str(player))
         # player.Balance -= player.Balance
 
     # Check remaining cash
-    bankrupt_players = filter(lambda p: p.Balance <= 0, active_players)
-    active_players = filter(lambda p: p.Balance > 0, active_players)
+    bankrupt_players = [p for p in active_players if p.Balance <= 0]
+    active_players = [p for p in active_players if p.Balance > 0]
 
-    print
+    print()
     for player in bankrupt_players:
-        print player.Name + " is bankrupt!"
-    raw_input("Hit any key for the next round...")
+        print(f"{player.Name} is bankrupt!")
+    input("Hit any key for the next round...")
 
-print "Game over! House always wins!"
+print("Game over! House always wins!")

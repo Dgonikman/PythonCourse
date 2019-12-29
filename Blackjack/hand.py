@@ -23,7 +23,7 @@ class Hand(object):
     def __str__(self):
         return str(self.Player.Name) + ',' + str(self.Bet) + ':\t' + \
                ''.join(map(str, self.Cards)) + '\tValue: ' + str(self.value) + \
-               ", " + self.Status
+               ", " + str(self.Status)
 
     def __len__(self):
         value = 0

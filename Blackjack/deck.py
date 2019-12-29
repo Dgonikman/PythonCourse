@@ -13,7 +13,7 @@ class Card(object):
     def __str__(self):
         if self.IsFaceDown:
             return "(*,*)"
-        return "({r},{s})".format(r=self.Rank, s=self.Suit[0])
+        return f"({self.Rank},{self.Suit[0]})"
 
     def __len__(self):
         """
@@ -77,7 +77,7 @@ class Shoe(object):
         self.NumberOfDecks = number_of_decks
         self.Decks = []
 
-        for _ in xrange(0, number_of_decks):
+        for _ in range(0, number_of_decks):
             self.Decks.append(Deck(True))
 
     def __len__(self):

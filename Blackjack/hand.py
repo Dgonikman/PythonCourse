@@ -1,5 +1,5 @@
 from enum import Enum
-from colorama import Fore
+from colorama import Fore, Style
 from pretty_printing import pretty_print
 
 
@@ -11,21 +11,26 @@ class State(Enum):
 
 
 class Hand(object):
-    def __init__(self, current_player, bet):
+    def __init__(self, current_player, bet, print_color=Fore.WHITE):
+        """
+        :param print_color:
+        :param current_player: Player
+        """
         self.Player = current_player
         self.Bet = bet
         self.Status = State.Active
         self.Cards = []
         self.CanSplit = False
+        self.PrintColor = print_color
 
     @property
     def value(self):
         return len(self)
 
     def __str__(self):
-        return str(self.Player.Name) + ',' + str(self.Bet) + ':\t' + \
+        return self.PrintColor + str(self.Player.Name) + ',' + str(self.Bet) + ':\t' + \
                ''.join(map(str, self.Cards)) + '\tValue: ' + str(self.value) + \
-               ", " + str(self.Status)
+               ", " + str(self.Status) + Style.RESET_ALL
 
     def __len__(self):
         value = 0

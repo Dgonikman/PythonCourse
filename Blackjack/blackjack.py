@@ -36,7 +36,7 @@ def split_hand(hand_to_play, idx):
     :param idx: card index in hand
     :type hand_to_play: Hand
     """
-    new_hand = Hand(hand_to_play.Player, hand_to_play.Bet)
+    new_hand = Hand(hand_to_play.Player, hand_to_play.Bet, Fore.LIGHTMAGENTA_EX)
     new_hand.deal(hand_to_play.Cards[idx])
     new_hand.deal(shoe.pop())
     return new_hand
@@ -91,7 +91,7 @@ INITIAL_BALANCE = 100
 MINIMAL_BET = 10
 
 # Globals
-dealer_hand = Hand(Player("Dealer", None), None)
+dealer_hand = Hand(Player("Dealer", None), None, Fore.LIGHTBLUE_EX)
 active_players = [Player("Player1", INITIAL_BALANCE)]
 shoe = Shoe(6)
 rounds = 0
@@ -106,7 +106,7 @@ if __name__ == '__main__':
         dealer_hand.reset()
         break_line()
         for player in active_players:
-            active_hands.append(Hand(player, MINIMAL_BET))
+            active_hands.append(Hand(player, MINIMAL_BET, Fore.LIGHTMAGENTA_EX))
         print(f"Round #{rounds}")
 
         # Deal hands

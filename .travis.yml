@@ -6,6 +6,4 @@ install:
   - cd Blackjack
   - pip install -r requirements.txt
 script:
-  - cd Blackjack
-  - python -m unittest tests/*
-
+  - python -m unittest tests/* -b

@@ -52,3 +52,21 @@ class Hand(object):
         self.Status = State.Active
         self.Cards = []
         self.CanSplit = False
+
+    def print_status(self):
+        player_name = self.Player.Name
+        print(self)
+        if self.Status == State.BlackJack:
+            print(f"21! {player_name}, your'e done")
+            self.Status = State.Stand
+        elif self.Status == State.Bust:
+            print(f"{str(self.value)}. Your hand is dead, {player_name}")
+
+    def print_hand(self, dealer_hand):
+        """
+        :param dealer_hand: Hand
+        """
+        print()
+        print(dealer_hand)
+        print(self)
+        print(f"{self.Player.Name}, what do you do?")

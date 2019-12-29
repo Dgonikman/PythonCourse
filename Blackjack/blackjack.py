@@ -1,6 +1,7 @@
 from deck import Shoe
 from player import Player
 from hand import Hand, State
+from pretty_printing import *
 
 
 def play_hand(hand_to_play, action):
@@ -10,13 +11,13 @@ def play_hand(hand_to_play, action):
     """
     player_name = hand_to_play.Player.Name
     if action == 'S' or action == 's':
-        print(f"{player_name } chose to stand")
+        pretty_print(f"{player_name} chose to stand", Fore.CYAN)
         hand_to_play.Status = State.Stand
     elif action == 'H' or action == 'h':
-        print(f"{player_name } chose to hit")
+        pretty_print(f"{player_name} chose to hit", Fore.CYAN)
         hand_to_play.deal(shoe.pop())
     elif action == 'D' or action == 'd':
-        print(f"{player_name } chose to double")
+        pretty_print(f"{player_name} chose to double", Fore.CYAN)
         hand_to_play.Bet *= 2
         hand_to_play.deal(shoe.pop())
         if hand_to_play.value < 21:
@@ -26,7 +27,7 @@ def play_hand(hand_to_play, action):
         second_hand = split_hand(hand_to_play, 1)
         return first_hand, second_hand
     else:
-        print("Illegal move, try again.")
+        pretty_print("Illegal move, try again.", Fore.RED)
     return hand_to_play, None
 
 
@@ -48,21 +49,27 @@ def pay_players():
 
     for bust_hand in bust_hands:
         bust_hand.Player.Balance -= bust_hand.Bet
+        pretty_print(f"{bust_hand.Player.Name} is bust!", Fore.LIGHTRED_EX)
         print(bust_hand)
 
     for blackjack_hand in blackjack_hands:
         blackjack_hand.Player.Balance += 1.5 * blackjack_hand.Bet
+        pretty_print(f"\t{blackjack_hand.Player.Name}, BLACKJACK!", Fore.LIGHTGREEN_EX)
         print(blackjack_hand)
 
     for stand_hand in stand_hands:
         if dealer_hand.Status == State.Bust:
+            pretty_print(f"Dealer is Bust! {stand_hand.Player.Name} wins!", Fore.LIGHTGREEN_EX)
             stand_hand.Player.Balance += stand_hand.Bet
         else:  # Dealer Stand or Blackjack
             if stand_hand.value == dealer_hand.value:
-                stand_hand.Player.Balance += 0  # Push
+                pretty_print(f"{stand_hand.Player.Name} - Push! No Winner.", Fore.LIGHTGREEN_EX)
+                pass  # Push
             elif stand_hand.value > dealer_hand.value:
+                pretty_print(f"{stand_hand.Player.Name} wins!", Fore.LIGHTGREEN_EX)
                 stand_hand.Player.Balance += stand_hand.Bet
             else:
+                pretty_print(f"{stand_hand.Player.Name} lost!", Fore.LIGHTRED_EX)
                 stand_hand.Player.Balance -= stand_hand.Bet
         print(stand_hand)
 
@@ -73,29 +80,6 @@ def any_stand_hands():
 
 
 # Pretty printing
-def print_hand(hand_to_print):
-    """
-    :type hand_to_print: Hand
-    """
-    print()
-    print(dealer_hand)
-    print(hand_to_print)
-    print(f"{hand_to_print.Player.Name}, what do you do?")
-
-
-def print_hand_status(hand_to_print):
-    """
-    :type hand_to_print: Hand
-    """
-    player_name = hand_to_print.Player.Name
-    print(hand_to_print)
-    if hand_to_print.Status == State.BlackJack:
-        print(f"21! {player_name}, your'e done")
-        hand_to_print.Status = State.Stand
-    elif hand_to_print.Status == State.Bust:
-        print(f"{str(hand_to_print.value)}. Your hand is dead, {player_name}")
-
-
 def break_line():
     breaker = ''
     for _ in range(0, 60):
@@ -121,77 +105,78 @@ shoe = Shoe(6)
 rounds = 0
 
 # Game
-while len(active_players) > 0:
-    # Init round
-    rounds += 1
-    active_hands = []
-    finished_hands = []
-    dealer_hand.reset()
-    break_line()
-    for player in active_players:
-        active_hands.append(Hand(player, MINIMAL_BET))
-    print(f"Round #{rounds}")
+if __name__ == '__main__':
+    while len(active_players) > 0:
+        # Init round
+        rounds += 1
+        active_hands = []
+        finished_hands = []
+        dealer_hand.reset()
+        break_line()
+        for player in active_players:
+            active_hands.append(Hand(player, MINIMAL_BET))
+        print(f"Round #{rounds}")
 
-    # Deal hands
-    for _ in range(0, 2):
+        # Deal hands
+        for _ in range(0, 2):
+            for hand in active_hands:
+                hand.deal(shoe.pop())
+            dealer_hand.deal(shoe.pop())
+        dealer_hand.Cards[0].flip()
+
+        # Print hands
+        print()
+        print(dealer_hand)
         for hand in active_hands:
-            hand.deal(shoe.pop())
-        dealer_hand.deal(shoe.pop())
-    dealer_hand.Cards[0].flip()
-
-    # Print hands
-    print()
-    print(dealer_hand)
-    for hand in active_hands:
-        print(hand)
-    break_line()
-
-    # Gameplay
-    while len(active_hands) > 0:
-        playing_hand = active_hands.pop(0)
-        while playing_hand.Status == State.Active:
-            print_hand(playing_hand)
-            possible_actions = "(S)tand\(H)it\(D)ouble"
-            if playing_hand.CanSplit:
-                possible_actions += "\s(P)lit"
-            hand1, hand2 = play_hand(playing_hand, input(possible_actions + ": "))
-            playing_hand = hand1
-            if hand2 is not None:
-                active_hands.insert(0, hand2)
-            print_hand_status(playing_hand)
-        finished_hands.append(playing_hand)
+            print(hand)
         break_line()
 
-    # Show dealers' hand
-    dealer_hand.Cards[0].flip()
-    print()
-    print(dealer_hand)
+        # Gameplay
+        while len(active_hands) > 0:
+            playing_hand = active_hands.pop(0)
+            while playing_hand.Status == State.Active:
+                playing_hand.print_hand(dealer_hand)
+                possible_actions = "(S)tand\(H)it\(D)ouble"
+                if playing_hand.CanSplit:
+                    possible_actions += "\s(P)lit"
+                hand1, hand2 = play_hand(playing_hand, pretty_input(possible_actions + ": "))
+                playing_hand = hand1
+                if hand2 is not None:
+                    active_hands.insert(0, hand2)
+                playing_hand.print_status()
+            finished_hands.append(playing_hand)
+            break_line()
 
-    while dealer_hand.Status == State.Active and any_stand_hands():
-        while dealer_hand.value < 16:
-            input("Hit any key to deal next card...")
-            play_hand(dealer_hand, 'H')
-            print_hand_status(dealer_hand)
-        if dealer_hand.Status == State.Active:
-            dealer_hand.Status = State.Stand
+        # Show dealers' hand
+        dealer_hand.Cards[0].flip()
         print()
         print(dealer_hand)
 
-    # Pay
-    pay_players()
+        while dealer_hand.Status == State.Active and any_stand_hands():
+            while dealer_hand.value < 16:
+                pretty_input("Hit any key to deal next card...")
+                play_hand(dealer_hand, 'H')
+                dealer_hand.print_status()
+            if dealer_hand.Status == State.Active:
+                dealer_hand.Status = State.Stand
+            print()
+            print(dealer_hand)
 
-    # Bankrupt everybody
-    for player in active_players:
-        print(tab_offset() + str(player))
-        # player.Balance -= player.Balance
+        # Pay
+        pay_players()
 
-    # Check remaining cash
-    bankrupt_players = [p for p in active_players if p.Balance <= 0]
-    active_players = [p for p in active_players if p.Balance > 0]
+        # Bankrupt everybody
+        for player in active_players:
+            pretty_print(tab_offset() + str(player), Fore.CYAN)
+            # player.Balance -= player.Balance
 
-    print()
-    for player in bankrupt_players:
-        print(f"{player.Name} is bankrupt!")
-    input("Hit any key for the next round...")
+        # Check remaining cash
+        bankrupt_players = [p for p in active_players if p.Balance <= 0]
+        active_players = [p for p in active_players if p.Balance > 0]
 
-print("Game over! House always wins!")
+        print()
+        for player in bankrupt_players:
+            pretty_print(f"{player.Name} is bankrupt!", Fore.LIGHTRED_EX)
+        pretty_input("Hit any key for the next round...")
+
+    print("Game over! House always wins!")

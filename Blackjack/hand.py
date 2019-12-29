@@ -1,4 +1,6 @@
 from enum import Enum
+from colorama import Fore
+from pretty_printing import pretty_print
 
 
 class State(Enum):
@@ -35,6 +37,20 @@ class Hand(object):
                 value -= 10
         return value
 
+    def game_value(self, dealer_hand_value):
+        """
+        :params dealer_hand_value: Int
+        """
+        if self.value == dealer_hand_value:
+            pretty_print(f"{self.Player.Name} - Push! No Winner.", Fore.LIGHTGREEN_EX)
+            pass # Push
+        elif self.value > dealer_hand_value:
+            pretty_print(f"{self.Player.Name} wins!", Fore.LIGHTGREEN_EX)
+            self.Player.Balance += self.Bet
+        else:
+            pretty_print(f"{self.Player.Name} lost!", Fore.LIGHTRED_EX)
+            self.Player.Balance -= self.Bet
+
     def deal(self, card):
         """
         :type card: Card
@@ -62,7 +78,7 @@ class Hand(object):
         elif self.Status == State.Bust:
             print(f"{str(self.value)}. Your hand is dead, {player_name}")
 
-    def print_hand(self, dealer_hand):
+    def print(self, dealer_hand):
         """
         :param dealer_hand: Hand
         """

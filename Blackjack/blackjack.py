@@ -62,15 +62,7 @@ def pay_players():
             pretty_print(f"Dealer is Bust! {stand_hand.Player.Name} wins!", Fore.LIGHTGREEN_EX)
             stand_hand.Player.Balance += stand_hand.Bet
         else:  # Dealer Stand or Blackjack
-            if stand_hand.value == dealer_hand.value:
-                pretty_print(f"{stand_hand.Player.Name} - Push! No Winner.", Fore.LIGHTGREEN_EX)
-                pass  # Push
-            elif stand_hand.value > dealer_hand.value:
-                pretty_print(f"{stand_hand.Player.Name} wins!", Fore.LIGHTGREEN_EX)
-                stand_hand.Player.Balance += stand_hand.Bet
-            else:
-                pretty_print(f"{stand_hand.Player.Name} lost!", Fore.LIGHTRED_EX)
-                stand_hand.Player.Balance -= stand_hand.Bet
+            stand_hand.game_value(dealer_hand.value)
         print(stand_hand)
 
 
@@ -135,7 +127,7 @@ if __name__ == '__main__':
         while len(active_hands) > 0:
             playing_hand = active_hands.pop(0)
             while playing_hand.Status == State.Active:
-                playing_hand.print_hand(dealer_hand)
+                playing_hand.print(dealer_hand)
                 possible_actions = "(S)tand\(H)it\(D)ouble"
                 if playing_hand.CanSplit:
                     possible_actions += "\s(P)lit"
